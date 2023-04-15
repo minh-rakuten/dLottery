@@ -22,7 +22,14 @@ contract NFTLottery is INFTLottery {
         _;
     }
 
-    constructor(address lotteryOwner, uint256 _ticketPrice, IERC721 nftContract, bool nftRequired, uint256 winningPercentage) {
+    constructor(
+    address lotteryOwner, 
+    uint256 _ticketPrice, 
+    IERC721 nftContract, 
+    bool nftRequired, 
+    uint256 winningPercentage,
+    address parentAddress,
+    ) {
         require(winningPercentage > 0 && winningPercentage <= 100, "Winning percentage must be between 1 and 100");
         owner = lotteryOwner;
         ticketPrice = _ticketPrice;
@@ -31,7 +38,7 @@ contract NFTLottery is INFTLottery {
         mWinningPercentage = winningPercentage;
     }
 
-    function buyTicket() external payable override {
+    function enterLottery() external payable override {
         require(!ended, "Lottery has already ended");
         require(msg.value == ticketPrice, "Incorrect ticket price");
         require(!mParticipants[msg.sender], "You have already purchased a ticket");
@@ -44,7 +51,7 @@ contract NFTLottery is INFTLottery {
         mPlayers.push(msg.sender);
     }
 
-    function endLottery() external override onlyOwner {
+    function pickWinner() external override onlyOwner {
         require(!ended, "Lottery has already ended");
 
         uint256 balance = address(this).balance;
@@ -75,11 +82,11 @@ contract NFTLottery is INFTLottery {
         payable(owner).transfer(balance);
     }
 
-    function players() external view returns(address[] memory) {
+    function getPlayers() external view returns(address[] memory) {
         return mPlayers;
     }
 
-    function condition(address participant) external view override returns(bool) {
+    function getCondition(address participant) external view override returns(bool) {
         if (_nftRequired) {
             return _nftContract.balanceOf(participant) > 0;
         } else {
@@ -88,19 +95,19 @@ contract NFTLottery is INFTLottery {
         }
     }
 
-    function winners() external view override returns(address[] memory) {
+    function getWinners() external view override returns(address[] memory) {
         require(ended, "Lottery has not ended yet");
 
         return mWinners;
     }
 
-    function lotteryNumber() external view override returns(uint256) {
+    function getLotteryNumber() external view override returns(uint256) {
         require(ended, "Lottery has not ended yet");
 
         return mLotteryNumber;
     }
 
-    function winningPercentage() external view override returns(uint256) {
+    function getWinningPercentage() external view override returns(uint256) {
         return mWinningPercentage;
     }
 
@@ -108,7 +115,7 @@ contract NFTLottery is INFTLottery {
         return _nftContract;
     }
 
-    function participants(address participant) external view override returns(bool) {
+    function getParticipants(address participant) external view override returns(bool) {
         return mParticipants[participant];
     }
 
@@ -119,7 +126,7 @@ contract NFTLottery is INFTLottery {
         }
 
         for (uint256 i = 0; i < numWinners; i++) {
-            uint256 j = i + uint256(keccak256(abi.encodePacked(block.timestamp, block.difficulty, i))) % (ticketCount - i);
+            uint256 j = i + uint256(keccak256(abi.encodePacked(block.timestamp, block.prevrandao, i))) % (ticketCount - i);
             (indices[i], indices[j]) = (indices[j], indices[i]);
         }
 
