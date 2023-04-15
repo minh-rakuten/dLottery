@@ -1,15 +1,15 @@
 import { useState } from 'react';
 import { ethers } from 'ethers';
-import contractABI from '../abi/dLotteryABI.json';
+import contractABI from '../abi/dLotteryNFTABI.json';
 import { Button } from '@mui/material';
 import Confetti from 'react-dom-confetti';
 
 
 // Create the contract instance
-const dLotteryAddress = '0x5fbdb2315678afecb367f032d93f642f64180aa3';
+const dLotteryNFTAddress = '0x8464135c8F25Da09e49BC8782676a84730C318bC';
 const provider = new ethers.providers.Web3Provider(window.ethereum);
 const signer = provider.getSigner();
-const contract = new ethers.Contract(dLotteryAddress, contractABI, signer);
+const contract = new ethers.Contract(dLotteryNFTAddress, contractABI, signer);
 
 function MyComponent() {
   const [loading, setLoading] = useState(false);
