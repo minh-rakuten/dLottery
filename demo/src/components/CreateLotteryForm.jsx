@@ -27,7 +27,7 @@ function CreateLotteryForm() {
     const [lotteryOwner, setLotteryOwner] = useState(account)
     const [lotteryType, setLotteryType] = useState(0)
     const [winningPercentage, setWinningPercentage] = useState(30)
-    const [deadLineInDays, setDeadLineInDays] = useState(1)
+    const [deadLineInDays, setDeadLineInDays] = useState(0)
     const [ticketPrice, setTicketPrice] = useState(0)
     const [minDepositPerUserInCoins, setMinDepositPerUserInCoins] = useState(0)
     const [maxDepositPerUserInCoins, setMaxDepositPerUserInCoins] = useState(0)
@@ -84,6 +84,12 @@ function CreateLotteryForm() {
         nftContract,
     );
 
+    const latestLotteryId = await contract.count() - 1;
+    const latestLottery = await contract.lotteries(latestLotteryId);
+    console.log(latestLottery.maxDepositPerUserInCoins.toString());
+
+
+
     console.log('Lottery created succeessfully!')
     // Clear the form
     setLotteryType(0);
@@ -106,15 +112,14 @@ function CreateLotteryForm() {
     <CardContent sx={{padding: '40px'}}>
       <form onSubmit={(e) => handleSubmit(e)}>
         <FormLabel sx={{ color: '#4B0082' }}>Lottery Type</FormLabel>
-        {account}
         <RadioGroup onChange={(e) => setLotteryType(e.target.value)} value={lotteryType} row aria-label="lotteryType" name="lotteryType" sx={{ color: "#4B0082", mb: 3, "& .Mui-checked": {color: "#ffa000"}}}>
           <FormControlLabel type="number" value="0" control={<Radio />} label="Fixed" />
           <FormControlLabel type="number" value="1" control={<Radio />} label="Variable" />
           <TextField label='Percentage of winners' type='number' variant='outlined' fullWidth value={winningPercentage} onChange={(e) => setWinningPercentage(e.target.value)} sx={{ color: '#4B0082', marginTop: '30px', '& label.Mui-focused': { color: '#4B0082', borderColor: '#ffa000', }, }} InputProps={{ endAdornment: '%' }} /> 
           <Slider aria-label='Winning Percentage' defaultValue={30} color='secondary' sx={{ color: '#9400D3', mb: 3 }} value={winningPercentage} onChange={handleSliderChange} />        
         </RadioGroup>
-        <TextField label="Minimum Stake" onChange={e => setMinDepositPerUserInCoins(e.target.value)} variant="outlined"  type='number' fullWidth sx={{ color: '#4B0082', mb: 3, "& label.Mui-focused": { color: '#4B0082', borderColor: '#ffa000' } }} InputProps={{ endAdornment: 'ETH' }} />
-        <TextField label="Maximum Stake" onChange={e => setMaxDepositPerUserInCoins(e.target.value)} variant="outlined"  type='number' fullWidth sx={{ color: '#4B0082', mb: 3, "& label.Mui-focused": { color: '#4B0082', borderColor: '#ffa000' } }} InputProps={{ endAdornment: 'ETH' }} />
+        <TextField label="Minimum Stake" onChange={e => setMinDepositPerUserInCoins(e.target.value)} variant="outlined"  type='text' fullWidth sx={{ color: '#4B0082', mb: 3, "& label.Mui-focused": { color: '#4B0082', borderColor: '#ffa000' } }} InputProps={{ endAdornment: 'ETH' }} />
+        <TextField label="Maximum Stake" onChange={e => setMaxDepositPerUserInCoins(e.target.value)} variant="outlined"  type='texnumbert' fullWidth sx={{ color: '#4B0082', mb: 3, "& label.Mui-focused": { color: '#4B0082', borderColor: '#ffa000' } }} InputProps={{ endAdornment: 'ETH' }} />
         <TextField label="Duration" onChange={e => setDeadLineInDays(e.target.value)} type='number' variant="outlined" fullWidth sx={{ color: '#4B0082', mb: 3, "& label.Mui-focused": { color: '#4B0082', borderColor: '#ffa000' } }} InputProps={{ endAdornment: 'days' }} />
         <FormLabel sx={{ color: '#4B0082' }}>Loser gets an NFT?</FormLabel>
         <RadioGroup onChange={(e) => setLooserGetNeft(e.target.checked)}  row aria-label="loserNFT" name="winnerNFT" sx={{ color: "#4B0082", mb: 3, "& .Mui-checked": {color: "#ffa000"}}}>
