@@ -8,6 +8,10 @@ contract SpinnerLottery is ILottery {
     address[] public players;
     address[] public mWinners;
     address mParentAddress;
+    uint mDeadLineInDays;
+    uint mDeployedTime;
+
+    
 
     uint public lotteryId;
     address public generatorAddress; //Parent contract adress for backward compability
@@ -19,12 +23,15 @@ contract SpinnerLottery is ILottery {
     constructor(
         address _owner,
         address parentAddress,
-        uint256 winningPercentage
+        uint256 winningPercentage,
+        uint deadLineInDays
     ){
         owner = _owner;
         lotteryId = 1;
         mWinningPercentage = winningPercentage;
         mParentAddress = parentAddress;
+        mDeadLineInDays = deadLineInDays;
+        mDeployedTime = block.timestamp;
     }
 
     function getBalance() 
@@ -43,7 +50,7 @@ contract SpinnerLottery is ILottery {
         return checkAddressAlreadyExsits(checkedAddr);
     }
 
-    function enterLottery() external payable minimumToEnter override { //payable cause lead to some payment in blockchain
+    function enterLottery() external payable enterLotteryRequirement override { //payable cause lead to some payment in blockchain
         // require(msg.value > .01 ether);
 
        //Player address
@@ -118,11 +125,25 @@ contract SpinnerLottery is ILottery {
         return checkAddressAlreadyExsits(participant);
     }
 
-    modifier minimumToEnter(){
+    modifier enterLotteryRequirement(){
         require(msg.value > .0001 ether);
         require(checkAddressAlreadyExsits(msg.sender) == false);
+        require(lotteryNotPassedDeadline() == true);
         _;
-       
+    }
+
+    function lotteryNotPassedDeadline() 
+    private 
+    view 
+    returns (bool) {
+
+    uint now = block.timestamp;
+    uint daysDiff = (now - mDeployedTime) / 60 / 60 / 24 ; 
+    if (daysDiff <= mDeadLineInDays){
+        return true;
+    }
+    return false;
+
     }
 
     function randomIndices(uint256 numWinners, uint256 ticketCount) private view returns (uint256[] memory) {
