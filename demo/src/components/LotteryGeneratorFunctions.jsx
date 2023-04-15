@@ -30,6 +30,26 @@ function LotteryGeneratorFunctions() {
         }
       };
 
+      const createNFTLottery = async () => {
+        try {
+          // Replace "nftContract" with an actual IERC721 instance
+          const tx = await contract.createLottery(
+            1, // NftLottery
+            50, // 50% winning percentage
+            7, // 7 days deadline
+            false, // Loosers don't get NFT
+            0, // NFT lotteries don't have maximum deposit per user
+            0, // NFT lotteries don't have minimum deposit per user
+            0, // NFT lotteries don't have ticket price
+            nftContract
+          );
+          await tx.wait();
+          setShowConfetti(true);
+        } catch (error) {
+          console.error('Error creating NFT Lottery:', error);
+        }
+      };
+
   return (
     <div>LotteryGeneratorFunctions</div>
   )
