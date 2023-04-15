@@ -11,7 +11,8 @@ contract SpinnerLottery is ILottery {
     uint mDeadLineInDays;
     uint mDeployedTime;
 
-    
+    uint mMinDeposit;
+    uint mMaxDeposit;
 
     uint public lotteryId;
     address public generatorAddress; //Parent contract adress for backward compability
@@ -20,11 +21,14 @@ contract SpinnerLottery is ILottery {
     bool public ended;
     uint256 internal prize = 0;
 
+
     constructor(
         address _owner,
         address parentAddress,
         uint256 winningPercentage,
-        uint deadLineInDays
+        uint deadLineInDays,
+        uint minDeposit,
+        uint maxDeposit
     ){
         owner = _owner;
         lotteryId = 1;
@@ -32,6 +36,8 @@ contract SpinnerLottery is ILottery {
         mParentAddress = parentAddress;
         mDeadLineInDays = deadLineInDays;
         mDeployedTime = block.timestamp;
+        mMinDeposit = minDeposit;
+        mMaxDeposit = maxDeposit;
     }
 
     function getBalance() 
@@ -126,7 +132,7 @@ contract SpinnerLottery is ILottery {
     }
 
     modifier enterLotteryRequirement(){
-        require(msg.value > .0001 ether);
+        require(msg.value >= mMinDeposit && msg.value <= mMaxDeposit, "out of deposit min max range");
         require(checkAddressAlreadyExsits(msg.sender) == false);
         require(lotteryNotPassedDeadline() == true);
         _;
@@ -153,7 +159,7 @@ contract SpinnerLottery is ILottery {
         }
 
         for (uint256 i = 0; i < numWinners; i++) {
-            uint256 j = i + uint256(keccak256(abi.encodePacked(block.timestamp, block.difficulty, i))) % (ticketCount - i);
+            uint256 j = i + uint256(keccak256(abi.encodePacked(block.timestamp, block.prevrandao, i))) % (ticketCount - i);
             (indices[i], indices[j]) = (indices[j], indices[i]);
         }
 
