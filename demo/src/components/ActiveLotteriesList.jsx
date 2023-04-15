@@ -10,6 +10,8 @@ import { useNavigate } from 'react-router-dom';
 
 
 function ActiveLotteriesList() {
+  const { account } = useEthers()
+
 
   const [lotteryList, setLotteryList] = useState([])
   const [stake, setStake] = useState(0)
@@ -64,6 +66,32 @@ function ActiveLotteriesList() {
       console.error(error);
     }
   }
+
+  async function pickWinner(address) {
+    try {
+      console.log(address)
+      const spinnerContract = new ethers.Contract(address, dLotterySpinnerABI, signer);
+      const tx = await spinnerContract.pickWinner();      
+      await tx.wait();
+      console.log(`Pickwinnert Transaction hash: ${tx.hash}`);
+      const receipt = await provider.getTransactionReceipt(tx.hash);      
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  async function claimPrize(address) {
+    try {
+      console.log(address)
+      const spinnerContract = new ethers.Contract(address, dLotterySpinnerABI, signer);
+      const tx = await spinnerContract.claimPrize();      
+      await tx.wait();
+      console.log(`Pickwinnert Transaction hash: ${tx.hash}`);
+      const receipt = await provider.getTransactionReceipt(tx.hash);      
+    } catch (error) {
+      console.error(error);
+    }
+  }
   
 
   return (
@@ -75,13 +103,19 @@ function ActiveLotteriesList() {
                 <Grid key={lotteryList.indexOf(lottery)} item xs={12} sm={6} md={3} sx={{ alignItems: 'flex-start' }}>
                   <Card sx={{ color: '#4B0082', height: '100%', padding: '20px', cursor: 'pointer', transition: 'transform 0.2s ease', '&:hover': { transform: 'scale(1.03)' }, }} onClick={() => handleClick('/lottery/3')} >              
                     <Typography variant="h5" gutterBottom><strong>Lottery Type: {lottery.lotteryType.toString() === '0' ? "Spinner" : "NFT"}</strong></Typography>
-                    <Typography variant="body1" sx={{marginBottom: '10px', color: '#9400D3'}}>Type: Fixed</Typography>
-                    <Typography variant="body1" sx={{marginBottom: '10px', color: '#9400D3'}}>Min: 0.1 ETH | Max: 1 ETH</Typography>
-                    <Typography variant="body2" sx={{marginBottom: '25px', color: '#FFA000'}}>Time Left: 2 days</Typography>
+                    <Typography variant="body1" sx={{marginBottom: '10px', color: '#9400D3'}}>Type: {( lottery.minDepositPerUserInCoins.toString() === lottery.maxDepositPerUserInCoins.toString() ? 'Fixed' : 'Variable' )}</Typography>
+                    <Typography variant="body1" sx={{marginBottom: '10px', color: '#9400D3'}}>Min: {lottery.minDepositPerUserInCoins.toString()} ETH | Max: {lottery.maxDepositPerUserInCoins.toString()} ETH</Typography>
+                    <Typography variant="body2" sx={{marginBottom: '25px', color: '#FFA000'}}>{lottery.deadLineInDays.toString()} days left</Typography>
                     <TextField label="Enter a stake" onChange={e => handleStakeAmount(e.target.value)} variant="outlined"  type='number' fullWidth sx={{ color: '#4B0082', mb: 3, "& label.Mui-focused": { color: '#4B0082', borderColor: '#ffa000' } }} InputProps={{ endAdornment: 'ETH' }} />
-                    <Button onClick={e => enterLottery((lottery.lotteryAddress))} variant="contained" sx={{ width: '100%', marginBottom: '20px', backgroundColor: '#ffb400', color: '#4B0082', '&:hover': { backgroundColor: '#ffa000' }, '&:active': { backgroundColor: '#ff8f00' } }}> <strong>Join Lottery</strong> </Button>
-                    <Button type="submit" variant="contained" sx={{ padding: '10px', width: '100%', backgroundColor: '#4B0082', color: '#ffff', '&:hover': { backgroundColor: '#ffa000' }, '&:active': { backgroundColor: '#ff8f00' } }}>
+                    <Button onClick={e => enterLottery((lottery.lotteryAddress))} variant="contained" sx={{ width: '100%', marginBottom: '20px', backgroundColor: '#4B0082', color: '#fff', '&:hover': { backgroundColor: '#ffa000' }, '&:active': { backgroundColor: '#ff8f00' } }}> <strong>Join Lottery</strong> </Button>
+                    {
+                      (lottery.lotteryOwner === account && <Button onClick={e => pickWinner((lottery.lotteryAddress))} type="submit" variant="contained" sx={{ padding: '10px', width: '100%', marginBottom: '20px', backgroundColor: '#ffb400', color: '#ffff', '&:hover': { backgroundColor: '#ffa000' }, '&:active': { backgroundColor: '#ff8f00' } }}>
                       <strong>Pick Winner</strong>
+                    </Button> )
+                    }
+
+                    <Button onClick={e => claimPrize((lottery.lotteryAddress))} type="submit" variant="contained" sx={{ padding: '10px', width: '100%', backgroundColor: '#9400D3', color: '#ffff', '&:hover': { backgroundColor: '#ffa000' }, '&:active': { backgroundColor: '#ff8f00' } }}>
+                      <strong>Claim Reward</strong>
                     </Button>
                   </Card>
                 </Grid>
