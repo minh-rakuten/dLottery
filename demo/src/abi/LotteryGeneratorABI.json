@@ -1,0 +1,148 @@
+[
+	{
+		"inputs": [
+			{
+				"internalType": "enum ContractGenerator.LotteryType",
+				"name": "lotteryType",
+				"type": "uint8"
+			},
+			{
+				"internalType": "uint256",
+				"name": "winningPercentage",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "deadLineInDays",
+				"type": "uint256"
+			},
+			{
+				"internalType": "bool",
+				"name": "looserGetNeft",
+				"type": "bool"
+			},
+			{
+				"internalType": "uint256",
+				"name": "maxDepositPerUserInCoins",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "minDepositPerUserInCoins",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "_ticketPrice",
+				"type": "uint256"
+			},
+			{
+				"internalType": "contract IERC721",
+				"name": "nftContract",
+				"type": "address"
+			}
+		],
+		"name": "createLottery",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"stateMutability": "nonpayable",
+		"type": "constructor"
+	},
+	{
+		"inputs": [],
+		"name": "count",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"name": "lotteries",
+		"outputs": [
+			{
+				"internalType": "address",
+				"name": "lotteryAddress",
+				"type": "address"
+			},
+			{
+				"internalType": "address",
+				"name": "lotteryOwner",
+				"type": "address"
+			},
+			{
+				"internalType": "enum ContractGenerator.LotteryType",
+				"name": "lotteryType",
+				"type": "uint8"
+			},
+			{
+				"internalType": "uint256",
+				"name": "winningPercentage",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "deadLineInDays",
+				"type": "uint256"
+			},
+			{
+				"internalType": "bool",
+				"name": "looserGetNeft",
+				"type": "bool"
+			},
+			{
+				"internalType": "uint256",
+				"name": "maxDepositPerUserInCoins",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "minDepositPerUserInCoins",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "lotteryGeneratorId",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "owner",
+		"outputs": [
+			{
+				"internalType": "address",
+				"name": "",
+				"type": "address"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	}
+]

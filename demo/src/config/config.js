@@ -15,7 +15,7 @@ import { Localhost } from '@usedapp/core'
 const config = {
   readOnlyChainId: Localhost.chainId,
   readOnlyUrls: {
-    [Localhost.chainId]: 'http://127.0.0.1:5671/',
+    [Localhost.chainId]: 'http://127.0.0.1:5670',
   },
 }
 
