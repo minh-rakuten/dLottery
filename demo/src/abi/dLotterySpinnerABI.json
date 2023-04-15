@@ -1,7 +1,14 @@
 [
 	{
 		"inputs": [],
-		"name": "enter",
+		"name": "claimPrize",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "enterLottery",
 		"outputs": [],
 		"stateMutability": "payable",
 		"type": "function"
@@ -29,10 +36,57 @@
 				"internalType": "uint256",
 				"name": "winningPercentage",
 				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "deadLineInDays",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "minDeposit",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "maxDeposit",
+				"type": "uint256"
 			}
 		],
 		"stateMutability": "nonpayable",
 		"type": "constructor"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"internalType": "address[]",
+				"name": "winners",
+				"type": "address[]"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "amount",
+				"type": "uint256"
+			}
+		],
+		"name": "LotteryEnded",
+		"type": "event"
+	},
+	{
+		"inputs": [],
+		"name": "ended",
+		"outputs": [
+			{
+				"internalType": "bool",
+				"name": "",
+				"type": "bool"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
 	},
 	{
 		"inputs": [],
@@ -61,11 +115,62 @@
 		"type": "function"
 	},
 	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "participant",
+				"type": "address"
+			}
+		],
+		"name": "getCondition",
+		"outputs": [
+			{
+				"internalType": "bool",
+				"name": "",
+				"type": "bool"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "getLotteryNumber",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "checkedAddr",
+				"type": "address"
+			}
+		],
+		"name": "getParticipants",
+		"outputs": [
+			{
+				"internalType": "bool",
+				"name": "",
+				"type": "bool"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
 		"inputs": [],
 		"name": "getPlayers",
 		"outputs": [
 			{
-				"internalType": "address payable[]",
+				"internalType": "address[]",
 				"name": "",
 				"type": "address[]"
 			}
@@ -97,9 +202,35 @@
 		"name": "getWinnerByLotteryId",
 		"outputs": [
 			{
-				"internalType": "address payable[]",
+				"internalType": "address[]",
 				"name": "",
 				"type": "address[]"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "getWinners",
+		"outputs": [
+			{
+				"internalType": "address[]",
+				"name": "",
+				"type": "address[]"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "getWinningPercentage",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
 			}
 		],
 		"stateMutability": "view",
@@ -129,7 +260,7 @@
 		"name": "mWinners",
 		"outputs": [
 			{
-				"internalType": "address payable",
+				"internalType": "address",
 				"name": "",
 				"type": "address"
 			}
@@ -161,7 +292,7 @@
 		"name": "players",
 		"outputs": [
 			{
-				"internalType": "address payable",
+				"internalType": "address",
 				"name": "",
 				"type": "address"
 			}

@@ -39,7 +39,7 @@ function CreateLotteryForm() {
     const [chains, setChains] = useState(['Ethereum'])
 
     // Create the contract instance
-    const LotteryGeneratorAddress = '0xE056c511C4E73D03E345Aa66b9e3994F10F96716';
+    const LotteryGeneratorAddress = '0x30d6A9baD89973831AE736C88AcCc894783D12aC';
     const provider = new ethers.providers.Web3Provider(window.ethereum);
     const signer = provider.getSigner();
     const contract = new ethers.Contract(LotteryGeneratorAddress, LotteryGeneratorABI, signer);
@@ -73,15 +73,13 @@ function CreateLotteryForm() {
     e.preventDefault();
   
     // Call the createLottery function of the ContractGenerator contract
-    await contract.createLottery(
+    await contract.createSpinnerLottery(
         lotteryType,
         winningPercentage,
         deadLineInDays,
         looserGetNeft,
         maxDepositPerUserInCoins,
-        minDepositPerUserInCoins,
-        ticketPrice,
-        nftContract,
+        minDepositPerUserInCoins
     );
 
     const latestLotteryId = await contract.count() - 1;

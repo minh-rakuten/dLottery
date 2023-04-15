@@ -10,11 +10,9 @@ import SpinnerFunctions from '../components/SpinnerFunctions';
 function Home() {
   return (
     <div className='mainContainer'>
-      <SpinnerFunctions />
       {/* <LotteryGeneratorFunctions /> */}
         {/* <DLotteryNFTFunctions /> */}
         <ActiveLotteriesList />
-        <CompletedLotteriesList />
     </div>
   )
 }
