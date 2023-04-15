@@ -44,7 +44,40 @@ contract ContractGenerator {
 
     mapping(uint256 => Data) public lotteries;
 
-    function createLottery(
+    function createSpinnerLottery(
+        LotteryType lotteryType,
+        uint winningPercentage,
+        uint deadLineInDays,
+        bool looserGetNeft,
+        uint maxDepositPerUserInCoins, // pass same min and max for fixed
+        uint minDepositPerUserInCoins
+    )
+        public
+    {
+        SpinnerLottery lottery = new SpinnerLottery(
+            msg.sender,
+            address(this),
+            winningPercentage,
+            deadLineInDays,
+            minDepositPerUserInCoins,
+            maxDepositPerUserInCoins
+        );
+            
+        lotteries[count] = Data({
+        lotteryAddress: address(lottery),
+        lotteryOwner: msg.sender,
+        lotteryType : lotteryType,
+        winningPercentage : winningPercentage, 
+        deadLineInDays : deadLineInDays,
+        looserGetNeft : looserGetNeft,
+        maxDepositPerUserInCoins : maxDepositPerUserInCoins,
+        minDepositPerUserInCoins : minDepositPerUserInCoins
+        });
+
+        count++;
+    }
+
+    function createNFTLottery(
         LotteryType lotteryType,
         uint winningPercentage,
         uint deadLineInDays,
@@ -52,34 +85,9 @@ contract ContractGenerator {
         uint maxDepositPerUserInCoins, // pass same min and max for fixed
         uint minDepositPerUserInCoins,
         IERC721 nftContract //Used for nft
-
     )
         public
     {
-
-        if(lotteryType == LotteryType.SpinnerLottery){
-
-        SpinnerLottery lottery = new SpinnerLottery(
-            msg.sender,
-            address(this),
-            winningPercentage
-            );
-            
-
-            lotteries[count] = Data({
-            lotteryAddress: address(lottery),
-            lotteryOwner: msg.sender,
-            lotteryType : lotteryType,
-            winningPercentage : winningPercentage, 
-            deadLineInDays : deadLineInDays,
-            looserGetNeft : looserGetNeft,
-            maxDepositPerUserInCoins : maxDepositPerUserInCoins,
-            minDepositPerUserInCoins : minDepositPerUserInCoins
-
-
-        });
-
-        }
         if(lotteryType == LotteryType.NftLottery){
 
          NFTLottery lottery = new NFTLottery(
@@ -93,20 +101,16 @@ contract ContractGenerator {
 
 
             lotteries[count] = Data({
-            lotteryAddress: address(lottery),
-            lotteryOwner: msg.sender,
-            lotteryType : lotteryType,
-            winningPercentage : winningPercentage, 
-            deadLineInDays : deadLineInDays,
-            looserGetNeft : looserGetNeft,
-            maxDepositPerUserInCoins : maxDepositPerUserInCoins, //NFT uses fixed so both are same
-            minDepositPerUserInCoins : minDepositPerUserInCoins //NFT uses fixed so both are same
-
-               });
+                lotteryAddress: address(lottery),
+                lotteryOwner: msg.sender,
+                lotteryType : lotteryType,
+                winningPercentage : winningPercentage, 
+                deadLineInDays : deadLineInDays,
+                looserGetNeft : looserGetNeft,
+                maxDepositPerUserInCoins : maxDepositPerUserInCoins, //NFT uses fixed so both are same
+                minDepositPerUserInCoins : minDepositPerUserInCoins //NFT uses fixed so both are same
+            });
         }
-
-      
-
 
         count++;
     }
