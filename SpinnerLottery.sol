@@ -14,6 +14,7 @@ contract SpinnerLottery is ILottery {
     uint private mWinningPercentage;
     mapping (uint => address[]) lotteryHistory; //Can have list of winners per lottery id
     bool public ended;
+    uint256 internal prize = 0;
 
     constructor(
         address _owner,
@@ -69,10 +70,7 @@ contract SpinnerLottery is ILottery {
 
         uint256 balance = address(this).balance;
 
-        uint256 prize = (balance - (balance /100) )/ numWinners; //0.01 fee for owner 
-        for (uint256 i = 0; i < numWinners; i++) {
-            payable(mWinners[i]).transfer(prize);
-        }
+        prize = balance / numWinners;
 
         lotteryHistory[lotteryId] = mWinners;
         lotteryId++;
@@ -94,18 +92,26 @@ contract SpinnerLottery is ILottery {
         return false;
     }
 
-    function withdraw() external override onlyOwner {
-        require(ended, "Lottery has not ended yet");
-
-        uint256 balance = address(this).balance;
-        require(balance > 0, "No funds to withdraw");
-
-        payable(owner).transfer(balance);
-    }
-
     modifier onlyOwner(){
         require(msg.sender == owner); 
         _;
+    }
+
+    modifier onlyWinner(){
+        require(addressIsInWinnerList() == true , "You not in this lottery winners list!");
+        require(prize == 0 , "Lottery has not finished yet!");
+
+        _;
+    }
+
+    function addressIsInWinnerList() private view returns (bool) {
+
+        for (uint i = 0; i < mWinners.length; i++) {
+                if (mWinners[i] == msg.sender) {
+                return true;
+            }
+        }
+        return false;
     }
 
     function getCondition(address participant) external view override returns(bool) {
@@ -147,5 +153,9 @@ contract SpinnerLottery is ILottery {
 
     function getWinningPercentage() external view override returns(uint256) {
         return mWinningPercentage;
+    }
+
+    function claimPrize() external override onlyWinner {
+            payable(msg.sender).transfer(prize);
     }
 }

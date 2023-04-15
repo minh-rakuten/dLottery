@@ -145,6 +145,5 @@ contract NFTLottery is INFTLottery {
 
     function claimPrize() external override onlyWinner {
             payable(msg.sender).transfer(prize);
-      
     }
 }
