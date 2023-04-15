@@ -1,0 +1,61 @@
+:root {
+  --background: #4B0082;
+  --primary-color: #FFD700;
+  --secondary-color: #9400D3;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  color: #ffff;
+  background: linear-gradient(to bottom right, var(--background), var(--secondary-color), #FFD700) no-repeat;
+  background-size: cover;
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+.mainContainer {
+  margin: 40px 60px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.lotteryFormHeader {
+  font-size: 30px;
+  margin-top: 30px;
+  /* padding: 10px; */
+  text-align: center;
+}
+
+.openOffersGrid {
+  display: flex;
+}
+
+.openOffersDiv {
+  margin: 40px 60px;
+  display: flex;
+  align-items: center;
+}
+
+.activeLotteriesDiv {
+  /* border: 1px solid red; */
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+}
