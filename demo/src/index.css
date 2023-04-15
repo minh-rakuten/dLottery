@@ -28,6 +28,7 @@ code {
 }
 
 .mainContainer {
+  height: 900px;
   margin: 40px 60px;
   display: flex;
   flex-direction: column;
