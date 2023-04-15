@@ -10,7 +10,7 @@ interface ILottery {
     function getCondition(address) external view returns(bool);
     function getWinners() external view returns(address[] memory);
     function getLotteryNumber() external view returns(uint256);
-    function inningPercentage() external view returns(uint256);
+    function getWinningPercentage() external view returns(uint256);
     
     event LotteryEnded(address[] winners, uint256 amount);
 }
