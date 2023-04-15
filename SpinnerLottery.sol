@@ -11,8 +11,8 @@ contract SpinnerLottery is ILottery {
     uint mDeadLineInDays;
     uint mDeployedTime;
 
-    uint mMinDeposit;
-    uint mMaxDeposit;
+    uint mMinDeposit; //Ether
+    uint mMaxDeposit; //Ether
 
     uint public lotteryId;
     address public generatorAddress; //Parent contract adress for backward compability
@@ -83,7 +83,7 @@ contract SpinnerLottery is ILottery {
 
         uint256 balance = address(this).balance;
 
-        prize = balance / numWinners;
+        prize = (balance - (balance /100)) / numWinners ;
 
         lotteryHistory[lotteryId] = mWinners;
         lotteryId++;
@@ -112,8 +112,7 @@ contract SpinnerLottery is ILottery {
 
     modifier onlyWinner(){
         require(addressIsInWinnerList() == true , "You not in this lottery winners list!");
-        require(prize == 0 , "Lottery has not finished yet!");
-
+        require(prize != 0 , "Lottery has not finished yet!");
         _;
     }
 
@@ -132,7 +131,7 @@ contract SpinnerLottery is ILottery {
     }
 
     modifier enterLotteryRequirement(){
-        require(msg.value >= mMinDeposit && msg.value <= mMaxDeposit, "out of deposit min max range");
+        require(msg.value >= (mMinDeposit * (1 ether)) && msg.value <= (mMaxDeposit * (1 ether)), "out of deposit min max range");
         require(checkAddressAlreadyExsits(msg.sender) == false);
         require(lotteryNotPassedDeadline() == true);
         _;
