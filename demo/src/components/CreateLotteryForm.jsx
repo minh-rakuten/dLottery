@@ -106,10 +106,10 @@ function CreateLotteryForm() {
 
   return (
     <Card sx={{ color: '#4B0082', marginTop: '40px', maxWidth: 600, margin: "0 auto", padding: '20px'}}>
-    <h2 className='lotteryFormHeader'>Reverse Lottery</h2>
+    <h2 className='lotteryFormHeader'>Spinner Lottery</h2>
     <CardContent sx={{padding: '40px'}}>
       <form onSubmit={(e) => handleSubmit(e)}>
-        <FormLabel sx={{ color: '#4B0082' }}>Lottery Type:</FormLabel>
+        <FormLabel sx={{ color: '#4B0082' }}>Lottery Type</FormLabel>
         <RadioGroup onChange={(e) => setLotteryType(e.target.value)} value={lotteryType} row aria-label="lotteryType" name="lotteryType" sx={{ color: "#4B0082", mb: 3, "& .Mui-checked": {color: "#ffa000"}}}>
           <FormControlLabel type="number" value="0" control={<Radio />} label="Fixed" />
           <FormControlLabel type="number" value="1" control={<Radio />} label="Variable" />
