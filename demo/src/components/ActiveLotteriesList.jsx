@@ -5,6 +5,7 @@ import LotteryGeneratorABI from '../abi/LotteryGeneratorABI'
 import dLotterySpinnerABI from '../abi/dLotterySpinnerABI.json'
 import {Card, Grid, Typography, Button, TextField} from "@mui/material";
 import { useNavigate } from 'react-router-dom';
+import Confetti from 'react-dom-confetti';
 
 
 
@@ -15,9 +16,24 @@ function ActiveLotteriesList() {
 
   const [lotteryList, setLotteryList] = useState([])
   const [stake, setStake] = useState(0)
+  const [confettiStatus, setConfettiStatus] = useState(false);
+
+  const confettiConfig = {
+    angle: 90,
+    spread: "351",
+    startVelocity: 40,
+    elementCount: "200",
+    dragFriction: "0.03",
+    duration: "5940",
+    stagger: 3,
+    width: "15px",
+    height: "44px",
+    perspective: "679px",
+    colors: ["#a864fd", "#29cdff", "#78ff44", "#ff718d", "#fdff6a"]
+  }
 
   // Create the contract instance
-  const LotteryGeneratorAddress = '0x6343b3e5e69C8d8310D4D577E474cF38af004391';
+  const LotteryGeneratorAddress = '0x7Df51c7a3a67Dcc08424c39B512eD89D28452472';
   const provider = new ethers.providers.Web3Provider(window.ethereum);
   const signer = provider.getSigner();
   const contract = new ethers.Contract(LotteryGeneratorAddress, LotteryGeneratorABI, signer);
@@ -86,7 +102,14 @@ function ActiveLotteriesList() {
       const tx = await spinnerContract.claimPrize();      
       await tx.wait();
       console.log(`Pickwinnert Transaction hash: ${tx.hash}`);
-      const receipt = await provider.getTransactionReceipt(tx.hash);      
+      const receipt = await provider.getTransactionReceipt(tx.hash);
+      const latestWinners = await spinnerContract.getWinners(); 
+      
+      const userWon = latestWinners.filter(winner => account === winner).length > 0
+      console.log(userWon)
+
+      userWon && setConfettiStatus(true)      
+
     } catch (error) {
       console.error(error);
     }
@@ -116,6 +139,7 @@ function ActiveLotteriesList() {
 
                     <Button onClick={e => claimPrize((lottery.lotteryAddress))} type="submit" variant="contained" sx={{ width: '100%', backgroundColor: '#9400D3', color: '#ffff', '&:hover': { backgroundColor: '#ffa000' }, '&:active': { backgroundColor: '#ff8f00' } }}>
                       <strong>Claim Reward</strong>
+                      {confettiStatus && <Confetti active={confettiStatus} config={confettiConfig} />}
                     </Button>
                   </Card>
                 </Grid>

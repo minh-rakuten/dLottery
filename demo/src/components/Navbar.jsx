@@ -32,7 +32,7 @@ function Navbar() {
     >
         <Tab value="index" label="Home" onClick={() => tabHandler('/', 'index')} sx={{ color: '#FFD700', justifySelf: 'center' }}/>
         <Tab value="create" label="Create Lottery" onClick={() => tabHandler('/create-lottery', 'create')} sx={{ color: '#FFD700', justifySelf: 'center' }}/>
-        <Tab value="leaderboard" label="Leaderboard" onClick={() => tabHandler('/leaderboard', 'leaderboard')} sx={{ color: '#FFD700', justifySelf: 'center' }}/>
+        {/* <Tab value="leaderboard" label="Leaderboard" onClick={() => tabHandler('/leaderboard', 'leaderboard')} sx={{ color: '#FFD700', justifySelf: 'center' }}/> */}
         </Tabs>
       </Box>
       <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}>

@@ -35,7 +35,7 @@ function CreateLotteryForm() {
   const [nftContract, setNftContract] = useState('')
 
   // Create the contract instance
-  const LotteryGeneratorAddress = '0x6343b3e5e69C8d8310D4D577E474cF38af004391';
+  const LotteryGeneratorAddress = '0x7Df51c7a3a67Dcc08424c39B512eD89D28452472';
   const provider = new ethers.providers.Web3Provider(window.ethereum);
   const signer = provider.getSigner();
   const contract = new ethers.Contract(LotteryGeneratorAddress, LotteryGeneratorABI, signer);
