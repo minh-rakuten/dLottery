@@ -1,17 +1,19 @@
 pragma solidity  ^0.8.11;
 
-contract SpinnerLottery{
+import "./interface/ILottery.sol";
+
+contract SpinnerLottery is ILottery {
 
     address public owner;
-    address payable [] public players;
-    address payable [] public mWinners;
+    address[] public players;
+    address[] public mWinners;
     address mParentAddress;
 
     uint public lotteryId;
     address public generatorAddress; //Parent contract adress for backward compability
     uint private mWinningPercentage;
-    mapping (uint => address payable[]) lotteryHistory; //Can have list of winners per lottery id
-
+    mapping (uint => address[]) lotteryHistory; //Can have list of winners per lottery id
+    bool public ended;
 
     constructor(
         address _owner,
@@ -32,18 +34,22 @@ contract SpinnerLottery{
         return address(this).balance;
     }
 
-    function getPlayers() public view returns (address payable[] memory){ //out put is tempurary only for function call
+    function getPlayers() public view returns (address[] memory){ //out put is tempurary only for function call
         return players;
     }
 
-    function enter() public payable minimumToEnter { //payable cause lead to some payment in blockchain
+    function getParticipants(address checkedAddr) external view returns(bool) {
+        return checkAddressAlreadyExsits(checkedAddr);
+    }
+
+    function enterLottery() external payable minimumToEnter override { //payable cause lead to some payment in blockchain
         // require(msg.value > .01 ether);
 
        //Player address
         players.push(payable(msg.sender));
     }
 
-    function getWinnerByLotteryId(uint index) public view returns (address payable[] memory){
+    function getWinnerByLotteryId(uint index) public view returns (address[] memory){
 
         return lotteryHistory[index];
     }
@@ -52,7 +58,7 @@ contract SpinnerLottery{
         return uint(keccak256(abi.encodePacked(owner, block.timestamp)));
     }
 
-    function pickWinner() public onlyOwner {
+    function pickWinner() external onlyOwner {
 
         uint256 numWinners = (players.length * mWinningPercentage) / 100;
         uint256[] memory indices = randomIndices(numWinners, players.length);
@@ -73,16 +79,26 @@ contract SpinnerLottery{
 
         //reset the state
         players = new address payable[](0);
+        ended = true;
     }
 
-    function checkAddressAlreadyExsits() private view returns (bool) {
+    function checkAddressAlreadyExsits(address checkedAddress) private view returns (bool) {
 
         for (uint i = 0; i < players.length; i++) {
-                if (players[i] == msg.sender) {
+                if (players[i] == checkedAddress) {
                 return true;
             }
         }
         return false;
+    }
+
+    function withdraw() external override onlyOwner {
+        require(ended, "Lottery has not ended yet");
+
+        uint256 balance = address(this).balance;
+        require(balance > 0, "No funds to withdraw");
+
+        payable(owner).transfer(balance);
     }
 
     modifier onlyOwner(){
@@ -90,10 +106,13 @@ contract SpinnerLottery{
         _;
     }
 
+    function getCondition(address participant) external view override returns(bool) {
+        return checkAddressAlreadyExsits(participant);
+    }
 
     modifier minimumToEnter(){
         require(msg.value > .0001 ether);
-        require(checkAddressAlreadyExsits() == false);
+        require(checkAddressAlreadyExsits(msg.sender) == false);
         _;
        
     }
@@ -110,5 +129,21 @@ contract SpinnerLottery{
         }
 
         return indices;
+    }
+
+    function getWinners() external view override returns(address[] memory) {
+        require(ended, "Lottery has not ended yet");
+
+        return mWinners;
+    }
+    
+    function getLotteryNumber() external view override returns(uint256) {
+        require(ended, "Lottery has not ended yet");
+
+        return lotteryId;
+    }
+
+    function getWinningPercentage() external view override returns(uint256) {
+        return mWinningPercentage;
     }
 }

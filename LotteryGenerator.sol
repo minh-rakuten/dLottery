@@ -71,3 +71,4 @@ contract ContractGenerator {
     }
 }
 
+Footer
