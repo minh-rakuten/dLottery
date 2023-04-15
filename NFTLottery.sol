@@ -14,6 +14,8 @@ contract NFTLottery is INFTLottery {
     bool public ended;
     address[] public mPlayers;
     mapping(address => bool) internal mParticipants;
+    uint256 internal prize = 0;
+
 
     IERC721 private _nftContract;
     bool private _nftRequired;
@@ -21,6 +23,23 @@ contract NFTLottery is INFTLottery {
     modifier onlyOwner() {
         require(msg.sender == owner, "Only the owner can call this function");
         _;
+    }
+
+    modifier onlyWinner(){
+        require(addressIsInWinnerList() == true , "You not in this lottery winners list!");
+        require(prize == 0 , "Lottery has not finished yet!");
+
+        _;
+    }
+
+    function addressIsInWinnerList() private view returns (bool) {
+
+        for (uint i = 0; i < mWinners.length; i++) {
+                if (mWinners[i] == msg.sender) {
+                return true;
+            }
+        }
+        return false;
     }
 
     constructor(
@@ -67,21 +86,8 @@ contract NFTLottery is INFTLottery {
         for (uint256 i = 0; i < numWinners; i++) {
             mWinners.push(mPlayers[indices[i]]);
         }
-
-        uint256 prize = balance / numWinners;
-        for (uint256 i = 0; i < numWinners; i++) {
-            payable(mWinners[i]).transfer(prize);
-        }
+        prize = balance / numWinners;
         emit LotteryEnded(mWinners, prize);
-    }
-
-    function withdraw() external override onlyOwner {
-        require(ended, "Lottery has not ended yet");
-
-        uint256 balance = address(this).balance;
-        require(balance > 0, "No funds to withdraw");
-
-        payable(owner).transfer(balance);
     }
 
     function getPlayers() external view returns(address[] memory) {
@@ -135,5 +141,10 @@ contract NFTLottery is INFTLottery {
 
     function getWinningPercentage() external view override returns(uint){
         return mWinningPercentage;
+    }
+
+    function claimPrize() external override onlyWinner {
+            payable(msg.sender).transfer(prize);
+      
     }
 }
