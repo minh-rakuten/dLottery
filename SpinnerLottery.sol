@@ -80,6 +80,8 @@ contract SpinnerLottery is ILottery {
         //reset the state
         players = new address payable[](0);
         ended = true;
+
+        emit LotteryEnded(mWinners, prize);
     }
 
     function checkAddressAlreadyExsits(address checkedAddress) private view returns (bool) {
