@@ -49,9 +49,8 @@ contract ContractGenerator {
         uint winningPercentage,
         uint deadLineInDays,
         bool looserGetNeft,
-        uint maxDepositPerUserInCoins,
+        uint maxDepositPerUserInCoins, // pass same min and max for fixed
         uint minDepositPerUserInCoins,
-        uint256 _ticketPrice, // Used for fixed
         IERC721 nftContract //Used for nft
 
     )
@@ -85,7 +84,7 @@ contract ContractGenerator {
 
          NFTLottery lottery = new NFTLottery(
             msg.sender,
-            _ticketPrice,
+            maxDepositPerUserInCoins,
             nftContract,
             false, //this is for demo purpos to can demo without create nft contract
             winningPercentage,
@@ -100,8 +99,8 @@ contract ContractGenerator {
             winningPercentage : winningPercentage, 
             deadLineInDays : deadLineInDays,
             looserGetNeft : looserGetNeft,
-            maxDepositPerUserInCoins : 0, //NFT does not have this values
-            minDepositPerUserInCoins : 0 //NFT does not have this values
+            maxDepositPerUserInCoins : maxDepositPerUserInCoins, //NFT uses fixed so both are same
+            minDepositPerUserInCoins : minDepositPerUserInCoins //NFT uses fixed so both are same
 
                });
         }
@@ -113,4 +112,3 @@ contract ContractGenerator {
     }
 }
 
-Footer
