@@ -27,7 +27,7 @@ contract NFTLottery is INFTLottery {
 
     modifier onlyWinner(){
         require(addressIsInWinnerList() == true , "You not in this lottery winners list!");
-        require(prize == 0 , "Lottery has not finished yet!");
+        require(prize != 0 , "Lottery has not finished yet!");
 
         _;
     }
