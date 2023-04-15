@@ -1,4 +1,5 @@
 import React from 'react'
+import LotteryGeneratorABI from '../abi/LotteryGeneratorABI.json'
 import { useState } from "react";
 import { Card, CardContent, TextField, Button } from "@mui/material";
 import Slider from '@mui/material/Slider';
@@ -12,58 +13,115 @@ import Checkbox from '@mui/material/Checkbox';
 import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 import InputLabel from '@mui/material/InputLabel';
+import { ethers } from 'ethers';
+import { useEthers } from '@usedapp/core'
+import { useContext } from 'react';
+import LotteryContext from '../context/LotteryContext'
+
 
 
 function CreateLotteryForm() {
-  const [lotteryType, setLotteryType] = useState('fixed')
-  const [winningPercentage, setWinningPercentage] = useState(30);
-  const [multichain, setMultichain] = useState(false);
-  const [chain, setChain] = useState(['Ethereum']);
+    const {account} = useEthers()
+    const { generateLottery } = useContext(LotteryContext)
+    const [lotteryAddress, setLotteryAddress] = useState(account)
+    const [lotteryOwner, setLotteryOwner] = useState(account)
+    const [lotteryType, setLotteryType] = useState(0)
+    const [winningPercentage, setWinningPercentage] = useState(30)
+    const [deadLineInDays, setDeadLineInDays] = useState(1)
+    const [ticketPrice, setTicketPrice] = useState(0)
+    const [minDepositPerUserInCoins, setMinDepositPerUserInCoins] = useState(0)
+    const [maxDepositPerUserInCoins, setMaxDepositPerUserInCoins] = useState(0)
+    const [looserGetNeft, setLooserGetNeft] = useState(false)
+    const [maxPlayers, setMaxPlayers] = useState(0)
+    const [duration, setDuration] = useState(0)
+    const [nftContract, setNftContract] = useState('0xE056c511C4E73D03E345Aa66b9e3994F10F96716')
+    const [multichain, setMultichain] = useState(false)
+    const [chains, setChains] = useState(['Ethereum'])
 
+    // Create the contract instance
+    const LotteryGeneratorAddress = '0xE056c511C4E73D03E345Aa66b9e3994F10F96716';
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    const signer = provider.getSigner();
+    const contract = new ethers.Contract(LotteryGeneratorAddress, LotteryGeneratorABI, signer);
+
+  const lotteryConfig = {
+    lotteryAddress,
+    lotteryOwner,
+    lotteryType,
+    winningPercentage,
+    deadLineInDays,
+    minDepositPerUserInCoins,
+    maxDepositPerUserInCoins,
+    looserGetNeft,
+    deadLineInDays,
+    multichain,
+    chains,
+  }
 
   const handleLotteryTypeChange = (event) => {
     setLotteryType(event.target.value)
   }
 
+
   const handleSliderChange = (event, newValue) => {
     setWinningPercentage(newValue);
   };
 
-  const handleMultichainChange = (event) => {
-    setMultichain(event.target.checked);
-  };
-  
-  const handleChainChange = (event) => {
-    setChain(event.target.value);
-  };
-  
 
-  const handleSubmit = (e) => {
-      e.preventDefault();
 
-    };
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+  
+    // Call the createLottery function of the ContractGenerator contract
+    await contract.createLottery(
+        lotteryType,
+        winningPercentage,
+        deadLineInDays,
+        looserGetNeft,
+        maxDepositPerUserInCoins,
+        minDepositPerUserInCoins,
+        ticketPrice,
+        nftContract,
+    );
+
+    console.log('Lottery created succeessfully!')
+    // Clear the form
+    setLotteryType(0);
+    setWinningPercentage(30);
+    setDeadLineInDays(1);
+    setTicketPrice(0);
+    setMinDepositPerUserInCoins(0);
+    setMaxDepositPerUserInCoins(0);
+    setLooserGetNeft(false);
+    setMaxPlayers(0);
+    setDuration(0);
+    setMultichain(false);
+    setChains(['Ethereum']);
+};
+
+
   return (
     <Card sx={{ color: '#4B0082', marginTop: '40px', maxWidth: 600, margin: "0 auto", padding: '20px'}}>
     <h2 className='lotteryFormHeader'>Reverse Lottery</h2>
     <CardContent sx={{padding: '40px'}}>
-      <form onSubmit={handleSubmit}>
-        
+      <form onSubmit={(e) => handleSubmit(e)}>
         <FormLabel sx={{ color: '#4B0082' }}>Lottery Type</FormLabel>
-        <RadioGroup onChange={handleLotteryTypeChange} row aria-label="lotteryType" name="lotteryType" value={lotteryType} sx={{ color: "#4B0082", mb: 3, "& .Mui-checked": {color: "#ffa000"}}}>
-          <FormControlLabel value="fixed" control={<Radio />} label="Fixed" />
-          <FormControlLabel value="variable" control={<Radio />} label="Variable" />
-          <TextField label='Percentage of winners' type='number' variant='outlined' fullWidth value={winningPercentage} onChange={(e) => setWinningPercentage(e.target.value)} sx={{ color: '#4B0082', marginTop: '30px', '& label.Mui-focused': { color: '#4B0082', borderColor: '#ffa000', }, }} InputProps={{ endAdornment: '%' }} InputLabelProps={{ '& .Mui-focused': { borderColor: '#ffa000' } }} /> 
+        {account}
+        <RadioGroup onChange={(e) => setLotteryType(e.target.value)} value={lotteryType} row aria-label="lotteryType" name="lotteryType" sx={{ color: "#4B0082", mb: 3, "& .Mui-checked": {color: "#ffa000"}}}>
+          <FormControlLabel type="number" value="0" control={<Radio />} label="Fixed" />
+          <FormControlLabel type="number" value="1" control={<Radio />} label="Variable" />
+          <TextField label='Percentage of winners' type='number' variant='outlined' fullWidth value={winningPercentage} onChange={(e) => setWinningPercentage(e.target.value)} sx={{ color: '#4B0082', marginTop: '30px', '& label.Mui-focused': { color: '#4B0082', borderColor: '#ffa000', }, }} InputProps={{ endAdornment: '%' }} /> 
           <Slider aria-label='Winning Percentage' defaultValue={30} color='secondary' sx={{ color: '#9400D3', mb: 3 }} value={winningPercentage} onChange={handleSliderChange} />        
         </RadioGroup>
-        <TextField label="Minimum Stake" variant="outlined"  type='number' fullWidth sx={{ color: '#4B0082', mb: 3, "& label.Mui-focused": { color: '#4B0082', borderColor: '#ffa000' } }} InputProps={{ endAdornment: 'ETH' }} InputLabelProps={{ "& .Mui-focused": { borderColor: '#ffa000' } }} />
-        <TextField label="Maximum Stake" variant="outlined"  type='number' fullWidth sx={{ color: '#4B0082', mb: 3, "& label.Mui-focused": { color: '#4B0082', borderColor: '#ffa000' } }} InputProps={{ endAdornment: 'ETH' }} InputLabelProps={{ "& .Mui-focused": { borderColor: '#ffa000' } }} />
-        <TextField label="Duration" type='number' variant="outlined" fullWidth sx={{ color: '#4B0082', mb: 3, "& label.Mui-focused": { color: '#4B0082', borderColor: '#ffa000' } }} InputProps={{ endAdornment: 'days' }} InputLabelProps={{ "& .Mui-focused": { borderColor: '#ffa000' } }} />
+        <TextField label="Minimum Stake" onChange={e => setMinDepositPerUserInCoins(e.target.value)} variant="outlined"  type='number' fullWidth sx={{ color: '#4B0082', mb: 3, "& label.Mui-focused": { color: '#4B0082', borderColor: '#ffa000' } }} InputProps={{ endAdornment: 'ETH' }} />
+        <TextField label="Maximum Stake" onChange={e => setMaxDepositPerUserInCoins(e.target.value)} variant="outlined"  type='number' fullWidth sx={{ color: '#4B0082', mb: 3, "& label.Mui-focused": { color: '#4B0082', borderColor: '#ffa000' } }} InputProps={{ endAdornment: 'ETH' }} />
+        <TextField label="Duration" onChange={e => setDeadLineInDays(e.target.value)} type='number' variant="outlined" fullWidth sx={{ color: '#4B0082', mb: 3, "& label.Mui-focused": { color: '#4B0082', borderColor: '#ffa000' } }} InputProps={{ endAdornment: 'days' }} />
         <FormLabel sx={{ color: '#4B0082' }}>Loser gets an NFT?</FormLabel>
-        <RadioGroup row aria-label="loserNFT" name="winnerNFT" sx={{ color: "#4B0082", mb: 3, "& .Mui-checked": {color: "#ffa000"}}}>
+        <RadioGroup onChange={(e) => setLooserGetNeft(e.target.checked)}  row aria-label="loserNFT" name="winnerNFT" sx={{ color: "#4B0082", mb: 3, "& .Mui-checked": {color: "#ffa000"}}}>
             <FormControlLabel value="yes" control={<Radio />} label="Yes" />
             <FormControlLabel value="no" control={<Radio />} label="No" />
         </RadioGroup>
-        <FormLabel sx={{ color: '#4B0082'}}>Multichain? </FormLabel>
+        {/* <FormLabel sx={{ color: '#4B0082'}}>Multichain? </FormLabel>
         <FormControlLabel
           control={<Checkbox checked={multichain} onChange={handleMultichainChange} />}
           label=""
@@ -74,7 +132,7 @@ function CreateLotteryForm() {
             <Select
               labelId="chain-select-label"
               id="chain-select"
-              value={chain}
+              value={chains}
               label="Select a chain"
               onChange={handleChainChange}
               multiple // add this prop to enable multiple selection
@@ -84,11 +142,7 @@ function CreateLotteryForm() {
               <MenuItem value="Polygon">Polygon</MenuItem>
             </Select>
           </FormControl>
-        )}
-
-
-
-  
+        )} */}
         <Button type="submit" variant="contained" sx={{ padding: '10px', width: '100%', backgroundColor: '#ffb400', color: '#4B0082', '&:hover': { backgroundColor: '#ffa000' }, '&:active': { backgroundColor: '#ff8f00' } }}>
           <strong>Generate Lottery</strong>
         </Button>
