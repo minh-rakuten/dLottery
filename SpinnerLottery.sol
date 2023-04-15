@@ -74,7 +74,10 @@ contract SpinnerLottery is ILottery {
 
     function pickWinner() external onlyOwner {
 
-        uint256 numWinners = (players.length * mWinningPercentage) / 100;
+        uint256 numWinners = ((players.length * mWinningPercentage) / 100) % 10; //to round winner numer, exaple: when percentage is 30% but only have 2 participants
+        if(numWinners < 1){
+            numWinners = 1;
+        }
         uint256[] memory indices = randomIndices(numWinners, players.length);
 
         for (uint256 i = 0; i < numWinners; i++) {
