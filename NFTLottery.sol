@@ -10,6 +10,7 @@ contract NFTLottery is INFTLottery {
     uint256 public ticketPrice;
     uint256 internal mLotteryNumber;
     uint256 internal mWinningPercentage;
+    address mParentAddress;
     bool public ended;
     address[] public mPlayers;
     mapping(address => bool) internal mParticipants;
@@ -28,7 +29,7 @@ contract NFTLottery is INFTLottery {
     IERC721 nftContract, 
     bool nftRequired, 
     uint256 winningPercentage,
-    address parentAddress,
+    address parentAddress
     ) {
         require(winningPercentage > 0 && winningPercentage <= 100, "Winning percentage must be between 1 and 100");
         owner = lotteryOwner;
@@ -36,6 +37,7 @@ contract NFTLottery is INFTLottery {
         _nftContract = nftContract;
         _nftRequired = nftRequired;
         mWinningPercentage = winningPercentage;
+        mParentAddress = parentAddress;
     }
 
     function enterLottery() external payable override {
@@ -58,7 +60,7 @@ contract NFTLottery is INFTLottery {
         require(balance > 0, "No funds to distribute as prize");
 
         ended = true;
-        mLotteryNumber = uint256(keccak256(abi.encodePacked(block.timestamp, block.prevrandao, mPlayers.length)));
+        mLotteryNumber = uint256(keccak256(abi.encodePacked(block.timestamp, block.difficulty, mPlayers.length)));
         uint256 numWinners = (mPlayers.length * mWinningPercentage) / 100;
         uint256[] memory indices = randomIndices(numWinners, mPlayers.length);
 
@@ -107,9 +109,7 @@ contract NFTLottery is INFTLottery {
         return mLotteryNumber;
     }
 
-    function getWinningPercentage() external view override returns(uint256) {
-        return mWinningPercentage;
-    }
+
 
     function nftContract() external view override returns(IERC721) {
         return _nftContract;
@@ -126,10 +126,14 @@ contract NFTLottery is INFTLottery {
         }
 
         for (uint256 i = 0; i < numWinners; i++) {
-            uint256 j = i + uint256(keccak256(abi.encodePacked(block.timestamp, block.prevrandao, i))) % (ticketCount - i);
+            uint256 j = i + uint256(keccak256(abi.encodePacked(block.timestamp, block.difficulty, i))) % (ticketCount - i);
             (indices[i], indices[j]) = (indices[j], indices[i]);
         }
 
         return indices;
+    }
+
+    function getWinningPercentage() external view override returns(uint){
+        return mWinningPercentage;
     }
 }
