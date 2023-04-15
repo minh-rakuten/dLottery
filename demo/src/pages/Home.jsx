@@ -4,11 +4,15 @@ import ActiveLotteriesList from '../components/ActiveLotteriesList';
 import CompletedLotteriesList from '../components/CompletedLotteriesList';
 import LotteryDetails from '../pages/LotteryDetails';
 import DLotteryNFTFunctions from '../components/DLotteryNFTFunctions';
+import LotteryGeneratorFunctions from '../components/LotteryGeneratorFunctions';
+import SpinnerFunctions from '../components/SpinnerFunctions';
 
 function Home() {
   return (
     <div className='mainContainer'>
-        <DLotteryNFTFunctions />
+      <SpinnerFunctions />
+      {/* <LotteryGeneratorFunctions /> */}
+        {/* <DLotteryNFTFunctions /> */}
         <ActiveLotteriesList />
         <CompletedLotteriesList />
     </div>

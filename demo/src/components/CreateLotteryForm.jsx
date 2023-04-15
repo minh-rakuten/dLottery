@@ -15,10 +15,15 @@ import InputLabel from '@mui/material/InputLabel';
 
 
 function CreateLotteryForm() {
+  const [lotteryType, setLotteryType] = useState('fixed')
   const [winningPercentage, setWinningPercentage] = useState(30);
   const [multichain, setMultichain] = useState(false);
   const [chain, setChain] = useState(['Ethereum']);
 
+
+  const handleLotteryTypeChange = (event) => {
+    setLotteryType(event.target.value)
+  }
 
   const handleSliderChange = (event, newValue) => {
     setWinningPercentage(newValue);
@@ -44,16 +49,14 @@ function CreateLotteryForm() {
       <form onSubmit={handleSubmit}>
         
         <FormLabel sx={{ color: '#4B0082' }}>Lottery Type</FormLabel>
-        <RadioGroup row aria-label="lotteryType" name="lotteryType" value="fixed" sx={{ color: "#4B0082", mb: 3, "& .Mui-checked": {color: "#ffa000"}}}>
+        <RadioGroup onChange={handleLotteryTypeChange} row aria-label="lotteryType" name="lotteryType" value={lotteryType} sx={{ color: "#4B0082", mb: 3, "& .Mui-checked": {color: "#ffa000"}}}>
           <FormControlLabel value="fixed" control={<Radio />} label="Fixed" />
           <FormControlLabel value="variable" control={<Radio />} label="Variable" />
           <TextField label='Percentage of winners' type='number' variant='outlined' fullWidth value={winningPercentage} onChange={(e) => setWinningPercentage(e.target.value)} sx={{ color: '#4B0082', marginTop: '30px', '& label.Mui-focused': { color: '#4B0082', borderColor: '#ffa000', }, }} InputProps={{ endAdornment: '%' }} InputLabelProps={{ '& .Mui-focused': { borderColor: '#ffa000' } }} /> 
           <Slider aria-label='Winning Percentage' defaultValue={30} color='secondary' sx={{ color: '#9400D3', mb: 3 }} value={winningPercentage} onChange={handleSliderChange} />        
         </RadioGroup>
-
-        <TextField label="ETH Amount Per Player" variant="outlined" type='number' fullWidth sx={{ color: '#4B0082', mb: 3, "& label.Mui-focused": { color: '#4B0082', borderColor: '#ffa000' } }} InputProps={{ endAdornment: 'ETH' }} InputLabelProps={{ "& .Mui-focused": { borderColor: '#ffa000' } }} />
-        {/* <TextField label="Maximum Stake" variant="outlined"  type='number' fullWidth sx={{ color: '#4B0082', mb: 3, "& label.Mui-focused": { color: '#4B0082', borderColor: '#ffa000' } }} InputProps={{ endAdornment: 'ETH' }} InputLabelProps={{ "& .Mui-focused": { borderColor: '#ffa000' } }} /> */}
-        <TextField label="Maximum Amount of Players" variant="outlined" fullWidth sx={{ color: '#4B0082', mb: 3, "& label.Mui-focused": { color: '#4B0082', borderColor: '#ffa000' } }} InputProps={{ endAdornment: 'ETH' }} InputLabelProps={{ "& .Mui-focused": { borderColor: '#ffa000' } }} />
+        <TextField label="Minimum Stake" variant="outlined"  type='number' fullWidth sx={{ color: '#4B0082', mb: 3, "& label.Mui-focused": { color: '#4B0082', borderColor: '#ffa000' } }} InputProps={{ endAdornment: 'ETH' }} InputLabelProps={{ "& .Mui-focused": { borderColor: '#ffa000' } }} />
+        <TextField label="Maximum Stake" variant="outlined"  type='number' fullWidth sx={{ color: '#4B0082', mb: 3, "& label.Mui-focused": { color: '#4B0082', borderColor: '#ffa000' } }} InputProps={{ endAdornment: 'ETH' }} InputLabelProps={{ "& .Mui-focused": { borderColor: '#ffa000' } }} />
         <TextField label="Duration" type='number' variant="outlined" fullWidth sx={{ color: '#4B0082', mb: 3, "& label.Mui-focused": { color: '#4B0082', borderColor: '#ffa000' } }} InputProps={{ endAdornment: 'days' }} InputLabelProps={{ "& .Mui-focused": { borderColor: '#ffa000' } }} />
         <FormLabel sx={{ color: '#4B0082' }}>Loser gets an NFT?</FormLabel>
         <RadioGroup row aria-label="loserNFT" name="winnerNFT" sx={{ color: "#4B0082", mb: 3, "& .Mui-checked": {color: "#ffa000"}}}>
