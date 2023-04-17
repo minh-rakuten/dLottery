@@ -1,5 +1,5 @@
 # dLottery
-Web3 Lottery 宝くじ
+Web3 Lottery 宝くじ https://ethglobal.com/showcase/dlottery-o6mum
 
 Introducing dLottery, a decentralized application designed to bring new and exciting twists to traditional lottery models.
 
