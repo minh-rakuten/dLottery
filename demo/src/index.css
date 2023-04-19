@@ -11,6 +11,7 @@
 }
 
 html, body {
+  height: 100%;
   color: #ffff;
   background: linear-gradient(to bottom right, var(--background), var(--secondary-color), #FFD700) no-repeat;
   background-size: cover;
