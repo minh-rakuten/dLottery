@@ -6,13 +6,14 @@ import dLotterySpinnerABI from '../abi/dLotterySpinnerABI.json'
 import {Card, Grid, Typography, Button, TextField} from "@mui/material";
 import { useNavigate } from 'react-router-dom';
 import Confetti from 'react-dom-confetti';
+import Loading from '../animations/Loading';
 
 
 
 
 function ActiveLotteriesList() {
   const { account } = useEthers()
-
+  const [loading, setLoading] = useState(false)
 
   const [lotteryList, setLotteryList] = useState([])
   const [stake, setStake] = useState(0)
@@ -51,18 +52,25 @@ function ActiveLotteriesList() {
   }
 
   const getLotteryData = async () => {
-    const lotteryCount = await contract.count() - 1
-    console.log(`Lottery count: ${lotteryCount}`)
-    let newLotteryList = []
-
-    for(let i = 0; i <= lotteryCount; i++){
-      const res = await contract.lotteries(i)
-      newLotteryList.push(res)
+    setLoading(true)
+    try{
+      const lotteryCount = await contract.count() - 1
+      console.log(`Lottery count: ${lotteryCount}`)
+      let newLotteryList = []
+  
+      for(let i = 0; i <= lotteryCount; i++){
+        const res = await contract.lotteries(i)
+        newLotteryList.push(res)
+      }
+  
+      console.log(newLotteryList)
+      setLotteryList(newLotteryList)
+  
+    } catch {
+      console.error('error');
+    } finally {
+      setLoading(false)
     }
-
-    console.log(newLotteryList)
-    setLotteryList(newLotteryList)
-    console.log(lotteryList)
   }
 
   useEffect(() => {
@@ -114,6 +122,7 @@ function ActiveLotteriesList() {
       console.error(error);
     }
   }
+
   
 
   return (
@@ -121,6 +130,7 @@ function ActiveLotteriesList() {
         <Typography variant="h4" sx={{ color: '#fff', mt: 5, textAlign: "left" }}><strong>Active Lotteries</strong></Typography>
         <Grid container spacing={2} sx={{mt: 1, width: '100%'}}> 
             {
+              loading ? <Loading /> :
               lotteryList.map(lottery => (
                 <Grid key={lotteryList.indexOf(lottery)} item xs={12} sm={6} md={3} sx={{ alignItems: 'flex-start' }}>
                   <Card sx={{ color: '#4B0082', height: '100%', padding: '20px', cursor: 'pointer', transition: 'transform 0.2s ease', '&:hover': { transform: 'scale(1.03)' }, }} onClick={() => handleClick('/lottery/3')} >              

@@ -17,10 +17,13 @@ import { ethers } from 'ethers';
 import { useEthers } from '@usedapp/core'
 import { useContext } from 'react';
 import LotteryContext from '../context/LotteryContext'
+import Loading from '../animations/Loading';
+
 
 
 
 function CreateLotteryForm() {
+    const [loading, setLoading] = useState(false)
     const {account} = useEthers()
     const { generateLottery } = useContext(LotteryContext)
     const [lotteryAddress, setLotteryAddress] = useState(account)
@@ -38,42 +41,44 @@ function CreateLotteryForm() {
     const [multichain, setMultichain] = useState(false)
     const [chains, setChains] = useState(['Ethereum'])
 
+
     // Create the contract instance
     const LotteryGeneratorAddress = '0x4D13E4B074b49BFe57af46A1a36D00aC59317CAB';
     const provider = new ethers.providers.Web3Provider(window.ethereum);
     const signer = provider.getSigner();
     const contract = new ethers.Contract(LotteryGeneratorAddress, LotteryGeneratorABI, signer);
 
-  const lotteryConfig = {
-    lotteryAddress,
-    lotteryOwner,
-    lotteryType,
-    winningPercentage,
-    deadLineInDays,
-    minDepositPerUserInCoins,
-    maxDepositPerUserInCoins,
-    looserGetNeft,
-    deadLineInDays,
-    multichain,
-    chains,
-  }
+    const lotteryConfig = {
+      lotteryAddress,
+      lotteryOwner,
+      lotteryType,
+      winningPercentage,
+      deadLineInDays,
+      minDepositPerUserInCoins,
+      maxDepositPerUserInCoins,
+      looserGetNeft,
+      deadLineInDays,
+      multichain,
+      chains,
+    }
 
-  const handleLotteryTypeChange = (event) => {
-    setLotteryType(event.target.value)
-  }
-
-
-  const handleSliderChange = (event, newValue) => {
-    setWinningPercentage(newValue);
-  };
+    const handleLotteryTypeChange = (event) => {
+      setLotteryType(event.target.value)
+    }
 
 
+    const handleSliderChange = (event, newValue) => {
+      setWinningPercentage(newValue);
+    };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-  
-    // Call the createLottery function of the ContractGenerator contract
-    await contract.createSpinnerLottery(
+
+
+    const handleSubmit = async (e) => {
+      e.preventDefault()
+      setLoading(true)
+      try {
+            // Call the createLottery function of the ContractGenerator contract
+      await contract.createSpinnerLottery(
         lotteryType,
         winningPercentage,
         deadLineInDays,
@@ -101,6 +106,13 @@ function CreateLotteryForm() {
     setDuration(0);
     setMultichain(false);
     setChains(['Ethereum']);
+      
+    } catch (error) {
+      console.log('error')
+    } finally {
+      setLoading(false)
+    }
+
 };
 
 
